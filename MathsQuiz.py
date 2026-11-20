@@ -5,38 +5,52 @@ def displayMenu(frame):
 root = Tk()
 
 root.title("Maths Quiz")
-root.config(bg="#234567")
+root.iconbitmap('icons/mathquizlogo2.ico')
+root.config(bg="#F2F0EF")
 root.geometry("848x480")
 
-label_title = Label(root, text="Maths Quiz", font=("Roboto", 18, "bold"), bg="#234567", fg="#ffffff")
-label_title.pack(anchor="center", pady=8)
+difficulty_selection = Frame(root, bg="#F2F0EF")
+difficulty_selection.place(relx=0.5, rely=0.5, anchor="center")
 
-frame1 = Frame(root, bg="#234567")
+original_img = Image.open("media/arithmeticsymbols.png")
+scaling = 0.4
+new_size = (int(original_img.width * scaling), int(original_img.height * scaling))
 
-label = Label(frame1, text="", font=("Roboto", 10, "bold"), bg="#234567", fg="#ffffff")
-label.pack(anchor="center", pady=10)
-button1 = Button(frame1, text = "Enter", foreground="#ffffff", background="#234567", font=("Roboto", 12), command=lambda: displayMenu(frame2), width=20)
-button1.pack(pady=10)
+resized_img = original_img.resize(new_size, Image.Resampling.LANCZOS)
+img = ImageTk.PhotoImage(resized_img)
 
-frame2 = Frame(root, bg="white")
+img_banner = Label(difficulty_selection, image=img, bg="#F2F0EF", bd=0, highlightthickness=0)
+img_banner.pack(pady=(0, 15))
 
-label1 = Label(frame2, text="", font=("Roboto", 18, "bold"), bg="white", fg="#234567")
-label1.pack(anchor="center")
+label_title = Label(difficulty_selection, text="Welcome to the Math Quiz!", font=("Verdana", 32, "bold"), fg="black", bg="#F2F0EF")
+label_title.pack(pady=(0, 15))
 
-button2 = Button(frame2, text = "Easy", foreground="#ffffff", background="#234567", font=("Roboto", 12), width=15)
-button2.pack(pady=10, anchor="center")
+label_subtitle = Label(difficulty_selection, text="Select Difficulty", font=("Roboto", 18, "bold"), fg="black", bg="#F2F0EF")
+label_subtitle.pack(pady=(0, 30))
 
-button3 = Button(frame2, text = "Intermediate", foreground="#ffffff", background="#234567", font=("Roboto", 12), width=15)
-button3.pack(pady=10, anchor="center")
+difficulty_buttons = Frame(difficulty_selection, bg="#F2F0EF")
+difficulty_buttons.pack()
 
-button4 = Button(frame2, text = "Hard", foreground="#ffffff", background="#234567", font=("Roboto", 12), width=15)
-button4.pack(pady=10, anchor="center")
+button_style = {
+    "font": ("Verdana", 12, "bold"),
+    "fg": "white",
+    "bg": "#32814e",
+    "activebackground": "#b4befe",
+    "width": 12,
+    "pady": 10,
+    "cursor": "hand2",
+}
 
-button5 = Button(frame2, text = "Back", foreground="#ffffff", background="#234567", font=("Roboto", 12), command=lambda: displayMenu(frame1), width=5)
-button5.pack(pady=35, anchor="center")
+easy_button = Button(difficulty_buttons, text="Easy", **button_style)
+easy_button.pack(side="left", padx=10)
 
-frame1.place(x=0, y=50, width=848, height=480)
-frame2.place(x=0, y=50, width=848, height=480)
+moderate_button = Button(difficulty_buttons, text="Moderate", **button_style)
+moderate_button.pack(side="left", padx=10)
 
-displayMenu(frame1)
+advanced_button = Button(difficulty_buttons, text="Advanced", **button_style)
+advanced_button.pack(side="left", padx=10)
+
+exit_button = Button(difficulty_selection, text="Exit", font=("Verdana", 12, "bold"), fg="white", bg="#32814e", cursor="hand2", command=root.destroy, width=25)
+exit_button.pack(pady=(50, 0))
+
 root.mainloop()
