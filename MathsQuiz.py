@@ -1,16 +1,161 @@
 from tkinter import *
 from PIL import ImageTk, Image
-def displayMenu(frame):
-    frame.tkraise()
+import random
+
+class MathsQuiz(Frame):
+    def __init__(self, parent, total=10, max_val=9, **kwargs):
+        bg = kwargs.get("bg") or kwargs.get("background") or "#DED1CA"
+        super().__init__(parent, **{**kwargs, "bg": bg})
+        self.configure(bg=bg)
+        font_md = ("Roboto", 12)
+
+        self.total, self.max_val = total, max_val
+        self.max_score = self.total * 10
+        self.q_num = self.score = self.answer = 0
+        self.attempts = 0
+        self.max_attempts = 2
+
+        self.problem = Label(self, bg=bg, font=("Roboto", 26, "bold"), pady=14)
+        self.problem.pack()
+
+        self.quiz_controls = Frame(self, bg=bg)
+        self.quiz_controls.pack()
+
+        self.status = Label(self.quiz_controls, bg=bg, font=("Roboto", 12))
+        self.status.pack(pady=(0, 8))
+
+        self.entry = Entry(self.quiz_controls, font=("Roboto", 16), width=10, justify="center")
+        self.entry.pack()
+        self.entry.bind("<Return>", self.submit)
+
+        self.btn = Button(self.quiz_controls, text="Enter", font=font_md, command=self.submit)
+        self.btn.pack(pady=8)
+
+        self.feedback = Label(self, bg=bg, font=("Roboto", 12))
+        self.feedback.pack()
+
+        self.end_btn_row = Frame(self, bg=bg)
+        Button(self.end_btn_row, text="Play Again?", font=font_md, command=self.restart).pack(side="left", padx=(0, 8))
+        Button(self.end_btn_row, text="Return to Menu", font=font_md, command=displayMenu).pack(side="left")
+
+        self.nextQuestion()
+
+    def randomInt(self):
+        return random.randint(0, self.max_val), random.randint(0, self.max_val)
+
+    def decideOperation(self):
+        return random.choice(["+", "-"])
+
+    def computeAnswer(self, a, b, op):
+        return a + b if op == "+" else a - b
+
+    def isCorrect(self, guess):
+        if guess == self.answer:
+            points = 10 if self.attempts == 0 else 5
+            self.score += points
+            if self.attempts == 0:
+                msg = "Correct!" 
+            else:
+                msg = "Correct, second time's the charm!"
+            self.feedback.config(text=msg)
+            self.nextQuestion()
+            return True
+
+        self.attempts += 1
+        if self.attempts < self.max_attempts:
+            self.feedback.config(text="Answer was wrong. Try again one more time.")
+            self.entry.delete(0, END)
+            self.entry.focus_set()
+            return False
+
+        self.feedback.config(text=f"Wrong answer, but keep going.")
+        self.nextQuestion()
+        return False
+
+    def displayResults(self):
+        full_score = (self.score / self.max_score) * 100 if self.max_score else 0
+        grade = (
+            "A" if full_score > 90 else
+            "B" if full_score > 75 else
+            "C" if full_score > 60 else
+            "D" if full_score > 40 else
+            "F"
+        )
+        self.quiz_controls.pack_forget()
+        self.problem.config(text=f"Quiz Complete! Score: {self.score}/{self.max_score} (Grade: {grade})")
+        self.feedback.config(text="")
+        self.end_btn_row.pack(pady=(4, 10))
+
+    def setDifficulty(self, max_val):
+        self.max_val = max_val
+        self.restart()
+
+    def nextQuestion(self):
+        if self.q_num >= self.total:
+            self.displayResults()
+            return
+
+        a, b = self.randomInt()
+        op = self.decideOperation()
+        self.answer = self.computeAnswer(a, b, op)
+        self.attempts = 0
+        self.q_num += 1
+
+        self.status.config(text=f"Question {self.q_num} of {self.total}  /  Score: {self.score}/{self.max_score}")
+        self.problem.config(text=f"{a} {op} {b} = ?")
+        self.entry.delete(0, END)
+        self.entry.focus_set()
+
+    def submit(self, event=None):
+        try:
+            guess = int(self.entry.get().strip())
+        except ValueError:
+            self.feedback.config(text="Please enter a whole number.")
+            self.entry.delete(0, END)
+            self.entry.focus_set()
+            return
+
+        self.isCorrect(guess)
+
+    def restart(self):
+        self.end_btn_row.pack_forget()
+        self.q_num = self.score = self.attempts = 0
+        self.feedback.config(text="")
+        self.entry.config(state="normal")
+        self.quiz_controls.pack(before=self.feedback)
+        self.nextQuestion()
+
+def displayMenu():
+    difficulty_selection.tkraise()
+def start_quiz(max_val):
+    quiz.setDifficulty(max_val)
+    quiz_frame.tkraise()
+
 root = Tk()
 
 root.title("Maths Quiz")
 root.iconbitmap('icons/mathquizlogo2.ico')
-root.config(bg="#F2F0EF")
+root.config(bg="#DED1CA")
 root.geometry("848x480")
 
-difficulty_selection = Frame(root, bg="#F2F0EF")
-difficulty_selection.place(relx=0.5, rely=0.5, anchor="center")
+container = Frame(root)
+container.pack(fill="both", expand=True)
+container.grid_rowconfigure(0, weight=1)
+container.grid_columnconfigure(0, weight=1)
+
+quiz_frame = Frame(container)
+bg_color = "#DED1CA"
+quiz_frame.configure(bg=bg_color)
+quiz_frame.grid(row=0, column=0, sticky="nsew")
+
+quiz = MathsQuiz(quiz_frame, max_val=9, bg=bg_color)
+quiz.place(relx=0.5, rely=0.5, anchor="center")
+
+difficulty_selection = Frame(container, bg="#DED1CA")
+difficulty_selection.grid(row=0, column=0, sticky="nsew")
+
+inner = Frame(difficulty_selection, bg="#DED1CA")
+inner.place(relx=0.5, rely=0.5, anchor="center")
 
 original_img = Image.open("media/arithmeticsymbols.png")
 scaling = 0.4
@@ -19,16 +164,16 @@ new_size = (int(original_img.width * scaling), int(original_img.height * scaling
 resized_img = original_img.resize(new_size, Image.Resampling.LANCZOS)
 img = ImageTk.PhotoImage(resized_img)
 
-img_banner = Label(difficulty_selection, image=img, bg="#F2F0EF", bd=0, highlightthickness=0)
+img_banner = Label(inner, image=img, bg="#DED1CA", bd=0, highlightthickness=0)
 img_banner.pack(pady=(0, 15))
 
-label_title = Label(difficulty_selection, text="Welcome to the Math Quiz!", font=("Verdana", 32, "bold"), fg="black", bg="#F2F0EF")
+label_title = Label(inner, text="Welcome to the Math Quiz!", font=("Verdana", 32, "bold"), fg="black", bg="#DED1CA")
 label_title.pack(pady=(0, 15))
 
-label_subtitle = Label(difficulty_selection, text="Select Difficulty", font=("Roboto", 18, "bold"), fg="black", bg="#F2F0EF")
+label_subtitle = Label(inner, text="Select Difficulty", font=("Roboto", 18, "bold"), fg="black", bg="#DED1CA")
 label_subtitle.pack(pady=(0, 30))
 
-difficulty_buttons = Frame(difficulty_selection, bg="#F2F0EF")
+difficulty_buttons = Frame(inner, bg="#DED1CA")
 difficulty_buttons.pack()
 
 button_style = {
@@ -41,16 +186,20 @@ button_style = {
     "cursor": "hand2",
 }
 
-easy_button = Button(difficulty_buttons, text="Easy", **button_style)
+easy_button = Button(difficulty_buttons, text="Easy", command=lambda: start_quiz(9), **button_style)
 easy_button.pack(side="left", padx=10)
 
-moderate_button = Button(difficulty_buttons, text="Moderate", **button_style)
+moderate_button = Button(difficulty_buttons, text="Moderate", command=lambda: start_quiz(99), **button_style)
 moderate_button.pack(side="left", padx=10)
 
-advanced_button = Button(difficulty_buttons, text="Advanced", **button_style)
+advanced_button = Button(difficulty_buttons, text="Advanced", command=lambda: start_quiz(9999), **button_style)
 advanced_button.pack(side="left", padx=10)
 
-exit_button = Button(difficulty_selection, text="Exit", font=("Verdana", 12, "bold"), fg="white", bg="#32814e", cursor="hand2", command=root.destroy, width=25)
+exit_button = Button(inner, text="Exit", font=("Verdana", 12, "bold"), fg="white", bg="#32814e", cursor="hand2", command=root.destroy, width=25)
 exit_button.pack(pady=(50, 0))
 
+for f in (difficulty_selection,quiz_frame):
+    f.grid(row=0, column=0, sticky="nsew")
+
+displayMenu()
 root.mainloop()
