@@ -62,17 +62,8 @@ class StudentManagementSystem:
 
     def load_records(self, show_warning: bool = True) -> None:
         self.records = []
-        if not os.path.exists(self.file_path):
-            if show_warning:
-                messagebox.showwarning("File Not Found", f"Could not find '{self.file_path}'.")
-            return
-
         with open(self.file_path, "r", encoding="utf-8") as f:
             lines = [line.strip() for line in f if line.strip()]
-
-        if not lines:
-            self.status_var.set("File is empty.")
-            return
 
         for line in lines[1:]:
             parts = [p.strip() for p in line.split(",")]
@@ -98,9 +89,7 @@ class StudentManagementSystem:
         if not q:
             messagebox.showinfo("Input Needed", "Please enter a student's Name or ID to search.")
             return
-        matches = [r for r in self.records if r["id"].lower() == q or r["name"].lower() == q] or [
-            r for r in self.records if q in r["id"].lower() or q in r["name"].lower()
-        ]
+        matches = [r for r in self.records if r["id"].lower() == q or r["name"].lower() == q] or [r for r in self.records if q in r["id"].lower() or q in r["name"].lower()]
         if not matches:
             self.show(f"No record found matching '{self.search_var.get().strip()}'.\n")
             return

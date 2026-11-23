@@ -36,7 +36,7 @@ class AlexaTellMeAJoke:
         button_row = Frame(center_group)
         button_row.pack()
 
-        self.action_button = Button(button_row,text="Tell me a joke.", command=self.on_button_click)
+        self.action_button = Button(button_row,text="Tell me a joke", command=self.on_button_click)
         self.action_button.pack(side=LEFT, padx=(0, 10))
         Button(button_row, text="Quit", command=self.root.destroy).pack(side=LEFT)
 
@@ -57,5 +57,4 @@ def main():
     AlexaTellMeAJoke(root, load_entries(FILE_PATH, DELIMITER))
     root.mainloop()
 
-if __name__ == "__main__":
-    main()
+main()
