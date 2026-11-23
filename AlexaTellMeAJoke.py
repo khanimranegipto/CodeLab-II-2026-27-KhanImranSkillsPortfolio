@@ -51,10 +51,7 @@ class AlexaTellMeAJoke:
             self.action_button.config(text="Next Joke")
             self.showing_punchline = False
 
-def main():
-    root = Tk()
-    root.iconbitmap('icons/alexatellmeajokeicon.ico')
-    AlexaTellMeAJoke(root, load_entries(FILE_PATH, DELIMITER))
-    root.mainloop()
-
-main()
+root = Tk()
+root.iconbitmap('icons/alexatellmeajokeicon.ico')
+AlexaTellMeAJoke(root, load_entries(FILE_PATH, DELIMITER))
+root.mainloop()

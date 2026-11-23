@@ -1,6 +1,5 @@
 from tkinter import *
 from tkinter import messagebox
-import os
 
 FILE = "Assessment 1 - Skills Portfolio/A1 - Resources/studentMarks.txt"
 
@@ -15,7 +14,7 @@ class StudentManagementSystem:
         self.gui()
         self.load_records(show_warning=False)
 
-    def gui(self) :
+    def gui(self):
         menu = LabelFrame(self.root, text="Menu", padx=8, pady=6)
         menu.pack(fill="x", padx=10, pady=4)
 
@@ -106,8 +105,7 @@ class StudentManagementSystem:
         body = "\n".join(self._fmt(r) for r in found)
         self.show(f"{label} overall marks: {self._num(target)} ({len(found)} student(s))\n" + "-" * 72 + f"\n{body}\n")
 
-if __name__ == "__main__":
-    root = Tk()
-    root.iconbitmap("icons/studentmanagericon.ico")
-    StudentManagementSystem(root, FILE)
-    root.mainloop()
+root = Tk()
+root.iconbitmap("icons/studentmanagericon.ico")
+StudentManagementSystem(root, FILE)
+root.mainloop()
