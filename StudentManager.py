@@ -1,10 +1,11 @@
 from tkinter import *
 from tkinter import messagebox
 
-FILE = "Assessment 1 - Skills Portfolio/A1 - Resources/studentMarks.txt"
+root = Tk()
+FILE = "Assessment 1 - Skills Portfolio/A1 - Resources/studentMarks.txt" # the reference file
 
-class StudentManagementSystem:
-    def __init__(self, root: Tk, file_path: str = FILE):
+class StudentManagementSystem: # the logic
+    def __init__(self, root: Tk, file_path: str = FILE): # app configuration
         self.root = root
         self.root.title("Student Manager")
         self.root.geometry("650x450")
@@ -35,7 +36,7 @@ class StudentManagementSystem:
         self.search_var = StringVar()
         entry = Entry(row2, textvariable=self.search_var, width=24)
         entry.pack(side="left", padx=6)
-        entry.bind("<Return>", lambda _e: self.search_student())
+        entry.bind("<Return>", lambda: self.search_student())
 
         Button(row2, text="Search Record", command=self.search_student).pack(side="left")
 
@@ -56,8 +57,8 @@ class StudentManagementSystem:
         return str(int(val)) if val.is_integer() else f"{val:.2f}"
 
     def _fmt(self, r: dict) -> str:
-        scores = ", ".join(self._num(s) for s in r["scores"])
-        return f"{r['name']} - #{r['id']} - Coursework Marks: [{scores}] - Examination Marks: {self._num(r['full_marks'])}"
+        course_marks = ", ".join(self._num(s) for s in r["course_marks"])
+        return f"{r['name']} - #{r['id']} - Coursework Marks: [{course_marks}] - Examination Marks: {self._num(r['exam_marks'])}"
 
     def load_records(self, show_warning: bool = True) -> None:
         self.records = []
@@ -72,8 +73,8 @@ class StudentManagementSystem:
                     self.records.append({
                         "id": rec_id,
                         "name": name,
-                        "scores": [float(s1), float(s2), float(s3)],
-                        "full_marks": float(full),
+                        "course_marks": [float(s1), float(s2), float(s3)],
+                        "exam_marks": float(full)
                     })
                 except ValueError:
                     pass
@@ -99,13 +100,12 @@ class StudentManagementSystem:
         if not self.records:
             self.show("No records available.")
             return
-        target = (max if highest else min)(r["full_marks"] for r in self.records)
-        found = [r for r in self.records if r["full_marks"] == target]
+        target = (max if highest else min)(r["exam_marks"] for r in self.records)
+        found = [r for r in self.records if r["exam_marks"] == target]
         label = "HIGHEST" if highest else "LOWEST"
         body = "\n".join(self._fmt(r) for r in found)
         self.show(f"{label} overall marks: {self._num(target)} ({len(found)} student(s))\n" + "-" * 72 + f"\n{body}\n")
 
-root = Tk()
 root.iconbitmap("icons/studentmanagericon.ico")
 StudentManagementSystem(root, FILE)
 root.mainloop()

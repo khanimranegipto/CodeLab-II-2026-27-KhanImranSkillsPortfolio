@@ -6,7 +6,7 @@ import random
 DELIMITER = "?" # used as the marker for separating the jokes from the punchline in randomJokes.txt 
 FILE_PATH = Path("Assessment 1 - Skills Portfolio/A1 - Resources/randomJokes.txt") # file path to randomJokes.txt, to be used in the load_entries function
 
-def load_entries(path: Path, delimiter: str) -> list[tuple[str, str]]: # the function for loading the jokes from the file. 
+def load_entries(path: Path, delimiter: str) -> list[tuple[str, str]]: # the function for loading the jokes from the file and separating the joke and punchline. 
     entries: list[tuple[str, str]] = [] 
     with path.open("r", encoding="utf-8") as file:
         for line in file:
