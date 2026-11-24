@@ -21,7 +21,7 @@ class AlexaTellMeAJoke: # the central logic behind the app, builds the gui and t
     def __init__(self, root: Tk, entries: list[tuple[str, str]]): # the gui settings
         self.root = root
         self.root.title("Alexa, Tell Me A Joke") 
-        self.root.geometry("480x480")
+        self.root.geometry("480x240")
 
         self.entries = entries
         self.current_entry: tuple[str, str] # defines the selected random entry as a tuple consisting of two strings.
