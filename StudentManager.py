@@ -2,6 +2,7 @@ from tkinter import *
 from tkinter import messagebox
 
 root = Tk()
+root.iconbitmap("icons/studentmanagericon.ico")
 FILE = "Assessment 1 - Skills Portfolio/A1 - Resources/studentMarks.txt" # the reference file
 
 class StudentManagementSystem: # the logic
@@ -106,6 +107,5 @@ class StudentManagementSystem: # the logic
         body = "\n".join(self._fmt(r) for r in found)
         self.show(f"{label} overall marks: {self._num(target)} ({len(found)} student(s))\n" + "-" * 72 + f"\n{body}\n")
 
-root.iconbitmap("icons/studentmanagericon.ico")
 StudentManagementSystem(root, FILE)
 root.mainloop()

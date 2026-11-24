@@ -3,6 +3,9 @@ from PIL import *
 from pathlib import *
 import random
 
+root = Tk()
+root.iconbitmap('icons/alexatellmeajokeicon.ico') # icon
+
 DELIMITER = "?" # used as the marker for separating the jokes from the punchline in randomJokes.txt 
 FILE_PATH = Path("Assessment 1 - Skills Portfolio/A1 - Resources/randomJokes.txt") # file path to randomJokes.txt, to be used in the load_entries function
 
@@ -51,7 +54,5 @@ class AlexaTellMeAJoke: # the central logic behind the app, builds the gui and t
             self.action_button.config(text="Next joke") # changes the button text to "Next joke"
             self.showing_punchline = False # flips the boolean back to false to return to if not self.showing_punchline
 
-root = Tk()
-root.iconbitmap('icons/alexatellmeajokeicon.ico') # icon
 AlexaTellMeAJoke(root, load_entries(FILE_PATH, DELIMITER)) # calls the class for the app logic along with initialising the txt file
 root.mainloop()
